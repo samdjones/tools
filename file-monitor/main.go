@@ -10,7 +10,10 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
+var version = "dev"
+
 func main() {
+	ver := flag.Bool("version", false, "Print version and exit")
 	src := flag.String("src", "", "Source directory to monitor (required)")
 	dst := flag.String("dst", "", "Destination directory for copied files (required)")
 	ext := flag.String("ext", "", "Comma-separated extensions to watch, e.g. .txt,.jpg (empty = all files)")
@@ -18,6 +21,11 @@ func main() {
 	rename := flag.Bool("rename", false, "Rename copied file by appending a datetime suffix")
 	pattern := flag.String("pattern", "20060102_150405", "Go time format string used for the datetime suffix")
 	flag.Parse()
+
+	if *ver {
+		fmt.Println("file-monitor", version)
+		os.Exit(0)
+	}
 
 	if *src == "" || *dst == "" {
 		fmt.Fprintln(os.Stderr, "Error: -src and -dst are required")
