@@ -13,7 +13,7 @@ import (
 func handleFile(path string, cfg Config) error {
 	info, err := os.Stat(path)
 	if err != nil {
-		return nil // file may have already been removed
+		return nil
 	}
 	if info.IsDir() {
 		return nil

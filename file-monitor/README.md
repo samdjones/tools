@@ -6,6 +6,7 @@ A Windows CLI tool written in Go that watches a source directory and automatical
 
 - Watch a directory for newly created files
 - **Auto-detect and monitor removable volumes** (memory cards, USB drives) when mounted
+- **Tolerate removable destination volumes** — pauses and resumes when destination is unavailable
 - Filter by one or more file extensions
 - Optionally delete the source file after copying (move behaviour)
 - Optionally rename copied files with a configurable datetime suffix
@@ -62,7 +63,7 @@ file-monitor -src <source-dir> -dest-volume-name <volume-label> [options]
 
 ### Examples
 
-Copy every new `.log` file from `C:\logs\incoming` to `C:\logs\archive`:
+Copy every new `.log` file from `C:\\logs\\incoming` to `C:\\logs\\archive`:
 
 ```
 file-monitor -src C:\logs\incoming -dst C:\logs\archive -ext .log

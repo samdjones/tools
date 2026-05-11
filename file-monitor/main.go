@@ -55,10 +55,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	if info, err := os.Stat(*src); err != nil || !info.IsDir() {
-		fmt.Fprintf(os.Stderr, "Error: source %q does not exist or is not a directory\n", *src)
-		os.Exit(1)
-	}
-
 	runMonitor(*src, *dst, *destVolumeName, *destVolumePath, *ext, *del, *rename, *pattern)
 }
