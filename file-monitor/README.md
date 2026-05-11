@@ -5,6 +5,7 @@ A Windows CLI tool written in Go that watches a source directory and automatical
 ## Features
 
 - Watch a directory for newly created files
+- **Auto-detect and monitor removable volumes** (memory cards, USB drives) when mounted
 - Filter by one or more file extensions
 - Optionally delete the source file after copying (move behaviour)
 - Optionally rename copied files with a configurable datetime suffix
@@ -25,20 +26,31 @@ go build -o file-monitor.exe .
 
 ## Usage
 
+### Direct directory monitoring
+
 ```
 file-monitor -src <source-dir> -dst <destination-dir> [options]
+```
+
+### Automatic volume monitoring
+
+```
+file-monitor -volume-name <volume-label> -dst <destination-dir> [options]
 ```
 
 ### Flags
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `-src` | *(required)* | Directory to monitor |
+| `-src` | *(optional)* | Directory to monitor (use `-src` or `-volume-name`, not both) |
+| `-volume-name` | | Volume label to watch for; monitoring starts when volume is mounted |
+| `-volume-path` | root | Subdirectory on the volume to monitor (e.g., `DCIM` for camera cards) |
 | `-dst` | *(required)* | Directory to copy files into (created if it doesn't exist) |
 | `-ext` | *(all files)* | Comma-separated extensions to watch, e.g. `.txt,.jpg` |
 | `-delete` | `false` | Delete source file after a successful copy |
 | `-rename` | `false` | Append a datetime suffix to copied filenames |
 | `-pattern` | `20060102_150405` | Go time format string used for the datetime suffix |
+| `-version` | | Print version and exit |
 
 ### Examples
 
@@ -60,6 +72,18 @@ Use a custom datetime pattern (year-month-day only):
 
 ```
 file-monitor -src D:\camera -dst D:\photos -rename -pattern 2006-01-02
+```
+
+Auto-monitor a memory card: wait for volume "MCARD" to be mounted, then copy `.jpg` files from its `DCIM` folder:
+
+```
+file-monitor -volume-name MCARD -volume-path DCIM -dst C:\photos -ext .jpg
+```
+
+Auto-monitor a USB drive: start copying as soon as a drive labeled "BACKUP" appears:
+
+```
+file-monitor -volume-name BACKUP -dst C:\backups -delete -rename
 ```
 
 ### Running as a Windows service
