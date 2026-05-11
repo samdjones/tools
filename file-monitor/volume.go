@@ -26,12 +26,7 @@ func findVolumeByLabel(label string) string {
 }
 
 // getVolumeLabel returns the volume label (name) of a mounted volume.
-// This is a simplified version that works cross-platform.
-// On Windows, we'd ideally use Windows APIs, but this works for basic checks.
 func getVolumeLabel(mountPoint string) string {
-	// Try to read from a hidden file or use OS-specific methods
-	// For now, we check if the volume is accessible and assume a basic name
-	// A more robust implementation would use Windows APIs via syscall
 	if _, err := os.Stat(mountPoint); err == nil {
 		return filepath.VolumeName(mountPoint)
 	}

@@ -54,7 +54,7 @@ file-monitor -volume-name <volume-label> -dst <destination-dir> [options]
 
 ### Examples
 
-Copy every new `.log` file from `C:\logs\incoming` to `C:\logs\archive`:
+Copy every new `.log` file from `C:\\logs\\incoming` to `C:\\logs\\archive`:
 
 ```
 file-monitor -src C:\logs\incoming -dst C:\logs\archive -ext .log
