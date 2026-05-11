@@ -32,10 +32,16 @@ go build -o file-monitor.exe .
 file-monitor -src <source-dir> -dst <destination-dir> [options]
 ```
 
-### Automatic volume monitoring
+### Automatic source volume monitoring
 
 ```
 file-monitor -volume-name <volume-label> -dst <destination-dir> [options]
+```
+
+### Automatic destination volume monitoring
+
+```
+file-monitor -src <source-dir> -dest-volume-name <volume-label> [options]
 ```
 
 ### Flags
@@ -43,9 +49,11 @@ file-monitor -volume-name <volume-label> -dst <destination-dir> [options]
 | Flag | Default | Description |
 |------|---------|-------------|
 | `-src` | *(optional)* | Directory to monitor (use `-src` or `-volume-name`, not both) |
-| `-volume-name` | | Volume label to watch for; monitoring starts when volume is mounted |
-| `-volume-path` | root | Subdirectory on the volume to monitor (e.g., `DCIM` for camera cards) |
-| `-dst` | *(required)* | Directory to copy files into (created if it doesn't exist) |
+| `-volume-name` | | Volume label to watch for as source; monitoring starts when volume is mounted |
+| `-volume-path` | root | Subdirectory on the source volume to monitor (e.g., `DCIM` for camera cards) |
+| `-dst` | *(optional)* | Destination directory (use `-dst` or `-dest-volume-name`, not both) |
+| `-dest-volume-name` | | Volume label to watch for as destination; syncing waits if volume is unmounted |
+| `-dest-volume-path` | root | Subdirectory on the destination volume |
 | `-ext` | *(all files)* | Comma-separated extensions to watch, e.g. `.txt,.jpg` |
 | `-delete` | `false` | Delete source file after a successful copy |
 | `-rename` | `false` | Append a datetime suffix to copied filenames |
@@ -84,6 +92,20 @@ Auto-monitor a USB drive: start copying as soon as a drive labeled "BACKUP" appe
 
 ```
 file-monitor -volume-name BACKUP -dst C:\backups -delete -rename
+```
+
+Monitor local folder but wait for a backup drive: copy files only when the destination "BACKUP" drive is mounted:
+
+```
+file-monitor -src C:\documents -dest-volume-name BACKUP -dest-volume-path backups
+```
+
+If the backup drive is ejected while files are waiting, file-monitor automatically pauses and resumes when the drive remounts.
+
+Monitor both source and destination volumes: watch camera's SD card and copy to external backup drive (both removable):
+
+```
+file-monitor -volume-name CAMERA -volume-path DCIM -dest-volume-name BACKUP -ext .jpg
 ```
 
 ### Running as a Windows service
