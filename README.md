@@ -2,8 +2,8 @@
 
 ## pin-digest.sh
 
-Pin Docker base images to immutable `sha256` digests for deterministic, auditable
-builds. Requires only [skopeo](https://github.com/containers/skopeo).
+Resolve a Docker image tag alias to its immutable `sha256` digest for deterministic,
+auditable builds. Requires only [skopeo](https://github.com/containers/skopeo).
 
 A floating tag such as `gcr.io/distroless/python3-debian13:nonroot` moves over time, so
 the same Dockerfile can pull different base images on different days. Pinning the digest
@@ -18,15 +18,19 @@ cross-platform builds still select the correct image.
 # Just the digest
 ./pin-digest.sh --digest-only gcr.io/distroless/python3-debian13:nonroot
 
-# Pin every resolvable FROM line in a Dockerfile, in place
-./pin-digest.sh -f Dockerfile
-
-# Preview the changes without writing
-./pin-digest.sh -f Dockerfile -n
+# Also show image metadata (created time, platform, OCI labels) on stderr
+./pin-digest.sh --meta gcr.io/distroless/python3-debian13:nonroot
 ```
 
-`FROM` lines are rewritten as `repo:tag@sha256:…` — the tag stays human-readable while
-the digest enforces determinism. Re-running re-resolves each tag, so the script is
-idempotent and can be used to bump base images. `scratch`, build-stage references, and
-lines already pinned without a tag are left untouched. Audit history is the Dockerfile's
-git diff.
+Use the result in a Dockerfile, keeping the tag readable while the digest enforces
+determinism:
+
+```dockerfile
+FROM gcr.io/distroless/python3-debian13:nonroot@sha256:886011…
+```
+
+Pin with `@`, not `:` — a bare `:sha256:…` would be parsed as a tag and fail. `--meta`
+prints to stderr (creation time, platform, and labels such as
+`org.opencontainers.image.{version,revision,source}`), so stdout stays a clean pasteable
+reference; some images (e.g. distroless) deliberately zero the timestamp for
+reproducibility, which is flagged. Audit history is your Dockerfile's git diff.
